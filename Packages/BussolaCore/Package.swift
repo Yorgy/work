@@ -18,5 +18,6 @@ let package = Package(
         .target(name: "BussolaTriage", dependencies: ["BussolaDomain"]),
 
         .testTarget(name: "BussolaDomainTests", dependencies: ["BussolaDomain"]),
+        .testTarget(name: "BussolaPersistenceTests", dependencies: ["BussolaPersistence"]),
     ]
 )
