@@ -13,6 +13,7 @@ import FoundationModels
 /// Os campos são deliberadamente estreitos: `AreaSugerida` é um enum, por isso o
 /// modelo **não consegue** inventar uma área que não existe. Restringir o
 /// espaço de saída vale mais do que qualquer instrução no prompt.
+@available(iOS 26.0, macOS 26.0, *)
 @Generable
 struct SugestaoGerada {
     @Guide(description: "A tarefa reescrita como acção concreta começada por um verbo, em português de Portugal. Mantém os nomes próprios exactamente como aparecem.")
@@ -37,6 +38,7 @@ struct SugestaoGerada {
     var confianca: Int
 }
 
+@available(iOS 26.0, macOS 26.0, *)
 @Generable
 enum AreaSugerida: String {
     case agencia, clientes, familia, obras, pessoal
@@ -46,6 +48,7 @@ enum AreaSugerida: String {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, *)
 @Generable
 enum TipoSugerido: String {
     case accao, espera, referencia, lixo
@@ -79,7 +82,7 @@ public struct FoundationModelsTriager: Triaging {
 
     public var isAvailable: Bool {
         #if canImport(FoundationModels)
-        if #available(iOS 26.0, macOS 15.0, *) {
+        if #available(iOS 26.0, macOS 26.0, *) {
             return SystemLanguageModel.default.availability == .available
         }
         return false
@@ -92,7 +95,7 @@ public struct FoundationModelsTriager: Triaging {
     /// A app diz isto no ecrã de definições em vez de esconder a degradação.
     public var razaoDeIndisponibilidade: String? {
         #if canImport(FoundationModels)
-        if #available(iOS 26.0, macOS 15.0, *) {
+        if #available(iOS 26.0, macOS 26.0, *) {
             switch SystemLanguageModel.default.availability {
             case .available:
                 return nil
@@ -114,7 +117,7 @@ public struct FoundationModelsTriager: Triaging {
 
     public func sugerir(para captura: Capture, agora: Date = Date()) async throws -> TriageSuggestion {
         #if canImport(FoundationModels)
-        if #available(iOS 26.0, macOS 15.0, *), isAvailable {
+        if #available(iOS 26.0, macOS 26.0, *), isAvailable {
             if let sugestao = await tentarModelo(captura: captura, agora: agora) {
                 return sugestao
             }
@@ -125,7 +128,7 @@ public struct FoundationModelsTriager: Triaging {
     }
 
     #if canImport(FoundationModels)
-    @available(iOS 26.0, macOS 15.0, *)
+    @available(iOS 26.0, macOS 26.0, *)
     private func tentarModelo(captura: Capture, agora: Date) async -> TriageSuggestion? {
         do {
             let sessao = LanguageModelSession(instructions: Self.instrucoes)
@@ -141,7 +144,7 @@ public struct FoundationModelsTriager: Triaging {
         }
     }
 
-    @available(iOS 26.0, macOS 15.0, *)
+    @available(iOS 26.0, macOS 26.0, *)
     private func converter(
         _ gerada: SugestaoGerada, captura: Capture, agora: Date
     ) -> TriageSuggestion {

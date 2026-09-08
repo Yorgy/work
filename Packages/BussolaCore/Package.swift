@@ -3,7 +3,10 @@ import PackageDescription
 
 let package = Package(
     name: "BussolaCore",
-    platforms: [.iOS(.v26), .macOS(.v15)],
+    // iOS 26 é o alvo real da app. O mínimo de macOS existe só para `swift test`
+    // correr num Mac sem exigir a versão mais recente do sistema: o domínio é
+    // Swift puro e a persistência precisa apenas de SwiftData.
+    platforms: [.iOS(.v26), .macOS(.v14)],
     products: [
         .library(name: "BussolaDomain", targets: ["BussolaDomain"]),
         .library(name: "BussolaPersistence", targets: ["BussolaPersistence"]),

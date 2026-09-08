@@ -56,6 +56,7 @@ project.yml             fonte de verdade do projecto Xcode (XcodeGen)
 | [06 — Decisões (ADR)](docs/06-decisoes-adr.md) | Decisões técnicas e o que se rejeitou |
 | [07 — Fontes](docs/07-fontes.md) | Pesquisa consultada |
 | [08 — Construir](docs/08-construir.md) | Do repositório ao iPhone |
+| [09 — Primeiro arranque no Mac](docs/09-primeiro-arranque-no-mac.md) | Passo a passo, comandos copiáveis |
 
 ## Aviso antes de escrever a primeira linha de Swift
 
