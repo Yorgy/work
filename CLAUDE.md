@@ -5,11 +5,21 @@ tipos, comentários, interface e mensagens de commit.
 
 ## Construir
 
+Os testes não precisam de XcodeGen nem de Homebrew:
+
+```bash
+swift test --package-path Packages/BussolaCore
+```
+
+Para o projecto Xcode (o `.xcodeproj` não está no repositório, por desenho):
+
 ```bash
 export DEVELOPMENT_TEAM=XXXXXXXXXX
-xcodegen generate                                  # o .xcodeproj não está no repo
-swift test --package-path Packages/BussolaCore     # rápido, sem simulador
+xcodegen generate
 ```
+
+Sem Homebrew, o XcodeGen instala-se pelo binário pré-compilado — ver
+`docs/09-primeiro-arranque-no-mac.md`.
 
 Sem toolchain Swift à mão, `./Tools/verificar.sh` corre três verificações que
 apanham erros de compilação sem compilador:

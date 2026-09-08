@@ -15,21 +15,15 @@ Se já tinhas o repositório clonado noutro sítio, basta `cd` até lá e `git p
 
 **Tens de estar dentro da pasta do repositório.** Tudo o resto falha em `~`.
 
-## 2. Instalar o XcodeGen
+## 2. Correr os testes
 
-```bash
-brew install xcodegen
-```
-
-Se não tiveres Homebrew: https://brew.sh
-
-## 3. Correr os testes
+**Este passo não precisa de XcodeGen nem de Homebrew.** É o que dá informação a sério, por isso vem primeiro.
 
 ```bash
 swift test --package-path Packages/BussolaCore
 ```
 
-São 115 testes, sem simulador. É aqui que compensa começar: se o domínio passar, a lógica que interessa está sã e o que sobrar são erros de interface, rápidos de resolver.
+São 115 testes, sem simulador. Se o domínio passar, a lógica que interessa está sã e o que sobrar são erros de interface, rápidos de resolver.
 
 Para correr só um conjunto:
 
@@ -37,7 +31,7 @@ Para correr só um conjunto:
 swift test --package-path Packages/BussolaCore --filter DayPlanTests
 ```
 
-## 4. Verificações sem compilador
+## 3. Verificações sem compilador
 
 ```bash
 ./Tools/verificar.sh
@@ -47,6 +41,36 @@ Se o zsh responder `permission denied`:
 
 ```bash
 chmod +x Tools/verificar.sh
+```
+
+## 4. Instalar o XcodeGen
+
+Só é preciso a partir daqui. Duas vias.
+
+**Sem Homebrew** — binário pré-compilado, fica só neste utilizador e não instala nada no sistema:
+
+```bash
+mkdir -p ~/.local/bin
+curl -L -o /tmp/xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/latest/download/xcodegen.zip
+unzip -o /tmp/xcodegen.zip -d /tmp/xcodegen
+cp -R /tmp/xcodegen/bin/* ~/.local/bin/
+cp -R /tmp/xcodegen/share ~/.local/share 2>/dev/null || true
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+export PATH="$HOME/.local/bin:$PATH"
+xcodegen --version
+```
+
+O macOS vai bloquear o binário à primeira execução por não estar assinado. Resolve-se com:
+
+```bash
+xattr -dr com.apple.quarantine ~/.local/bin/xcodegen
+```
+
+**Com Homebrew**, se preferires instalá-lo (demora mais e pede a tua palavra-passe):
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+brew install xcodegen
 ```
 
 ## 5. Gerar o projecto Xcode
@@ -80,6 +104,8 @@ Depois `⌘R` com o iPhone ligado por cabo.
 |---|---|
 | `no such file or directory: ./Tools/verificar.sh` | Não estás dentro do repositório |
 | `unexpected arguments: '#'` | Copiaste um comentário `#` para a linha de comando |
-| `command not found: xcodegen` | Falta o passo 2 |
+| `command not found: xcodegen` | Falta o passo 4. Não é preciso para os testes |
+| `command not found: brew` | Não tens Homebrew. Usa a via sem Homebrew do passo 4 |
+| `xcodegen não pode ser aberto` | Gatekeeper. Corre o `xattr -dr com.apple.quarantine` |
 | `error: the package requires macOS 14` | Actualiza o macOS, ou corre os testes só ao domínio |
 | Erros de assinatura no Xcode | Falta o `DEVELOPMENT_TEAM` ou a conta Apple Developer |
