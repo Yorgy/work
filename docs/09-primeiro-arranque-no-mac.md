@@ -15,9 +15,26 @@ Se já tinhas o repositório clonado noutro sítio, basta `cd` até lá e `git p
 
 **Tens de estar dentro da pasta do repositório.** Tudo o resto falha em `~`.
 
-## 2. Correr os testes
+## 2. Apontar as ferramentas para o Xcode
 
-**Este passo não precisa de XcodeGen nem de Homebrew.** É o que dá informação a sério, por isso vem primeiro.
+O macOS traz um Swift nas *Command Line Tools*, separado e mais antigo do que o do Xcode. Se o `swift` que corres vier de `/Library/Developer/CommandLineTools/`, é esse. Confirma com:
+
+```bash
+xcode-select -p
+```
+
+Se **não** responder algo terminado em `/Applications/Xcode.app/Contents/Developer`, aponta-o para o Xcode:
+
+```bash
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+swift --version
+```
+
+Isto é obrigatório para compilar a app (o SDK do iOS 26 e o FoundationModels só existem no Xcode). Para correr os testes do pacote não é estritamente necessário, mas evita confusões.
+
+## 3. Correr os testes
+
+**Este passo não precisa de XcodeGen nem de Homebrew.** É o que dá informação a sério.
 
 ```bash
 swift test --package-path Packages/BussolaCore
@@ -31,7 +48,7 @@ Para correr só um conjunto:
 swift test --package-path Packages/BussolaCore --filter DayPlanTests
 ```
 
-## 3. Verificações sem compilador
+## 4. Verificações sem compilador
 
 ```bash
 ./Tools/verificar.sh
@@ -43,7 +60,7 @@ Se o zsh responder `permission denied`:
 chmod +x Tools/verificar.sh
 ```
 
-## 4. Instalar o XcodeGen
+## 5. Instalar o XcodeGen
 
 Só é preciso a partir daqui. Duas vias.
 
@@ -73,7 +90,7 @@ xattr -dr com.apple.quarantine ~/.local/bin/xcodegen
 brew install xcodegen
 ```
 
-## 5. Gerar o projecto Xcode
+## 6. Gerar o projecto Xcode
 
 O Team ID está em https://developer.apple.com/account → Membership Details → Team ID. São dez caracteres.
 
@@ -89,7 +106,7 @@ Para não repetires o `export` a cada sessão:
 echo 'export DEVELOPMENT_TEAM=OTEUTEAMID' >> ~/.zshrc
 ```
 
-## 6. No Xcode
+## 7. No Xcode
 
 Em **Signing & Capabilities**, nos dois alvos (`Bussola` e `BussolaWidgets`):
 
@@ -104,8 +121,9 @@ Depois `⌘R` com o iPhone ligado por cabo.
 |---|---|
 | `no such file or directory: ./Tools/verificar.sh` | Não estás dentro do repositório |
 | `unexpected arguments: '#'` | Copiaste um comentário `#` para a linha de comando |
-| `command not found: xcodegen` | Falta o passo 4. Não é preciso para os testes |
-| `command not found: brew` | Não tens Homebrew. Usa a via sem Homebrew do passo 4 |
+| `command not found: xcodegen` | Falta o passo 5. Não é preciso para os testes |
+| `command not found: brew` | Não tens Homebrew. Usa a via sem Homebrew do passo 5 |
 | `xcodegen não pode ser aberto` | Gatekeeper. Corre o `xattr -dr com.apple.quarantine` |
-| `error: the package requires macOS 14` | Actualiza o macOS, ou corre os testes só ao domínio |
+| `error: 'v26' is unavailable` | Toolchain antigo a ler um pacote que pedia iOS 26. Já corrigido — faz `git pull` |
+| `-package-description-version 6.0.0` no erro | O `swift` a correr vem das Command Line Tools. Ver passo 2 |
 | Erros de assinatura no Xcode | Falta o `DEVELOPMENT_TEAM` ou a conta Apple Developer |
