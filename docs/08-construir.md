@@ -50,14 +50,17 @@ Depois da primeira instalação: **Definições → Botão de Ação → Atalho 
 
 ## Sem toolchain Swift à mão
 
-O verificador estrutural apanha chavetas, parênteses e aspas desequilibradas, que é a classe de erros que se comete a escrever muito código de uma vez:
-
 ```bash
-python3 Tools/verificar_estrutura.py Packages/
-python3 Tools/verificar_estrutura.py App/
+./Tools/verificar.sh
 ```
 
-Não substitui `swift build` — não sabe nada de tipos.
+Três verificações, para as três classes de erro que se cometem a escrever muito código de uma vez:
+
+- **Estrutura** — chavetas, parênteses e aspas desequilibradas
+- **Assinaturas** — chamadas cujos argumentos não correspondem à declaração do tipo
+- **Imports** — módulos usados sem serem importados
+
+Não substituem `swift build`: nenhuma sabe nada de tipos, genéricos, overloads ou conformidade a protocolos. Passar quer dizer que o código não falha por *estas* três razões, não que compila.
 
 ## Estrutura
 

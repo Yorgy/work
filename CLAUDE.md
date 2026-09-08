@@ -11,8 +11,17 @@ xcodegen generate                                  # o .xcodeproj não está no 
 swift test --package-path Packages/BussolaCore     # rápido, sem simulador
 ```
 
-Sem toolchain Swift à mão: `python3 Tools/verificar_estrutura.py Packages/` apanha
-chavetas e aspas desequilibradas. Não sabe nada de tipos.
+Sem toolchain Swift à mão, `./Tools/verificar.sh` corre três verificações que
+apanham erros de compilação sem compilador:
+
+| Ferramenta | Apanha |
+|---|---|
+| `verificar_estrutura.py` | Chavetas, parênteses e aspas desequilibradas |
+| `verificar_referencias.py` | Chamadas cujos argumentos não batem com a declaração |
+| `verificar_imports.py` | Imports em falta entre módulos |
+
+Nenhuma sabe nada de tipos, genéricos, overloads ou protocolos. Passar não
+significa que compila — significa que não falha por estas três razões.
 
 ## Arquitectura, em três regras
 
