@@ -33,6 +33,13 @@ apanham erros de compilação sem compilador:
 Nenhuma sabe nada de tipos, genéricos, overloads ou protocolos. Passar não
 significa que compila — significa que não falha por estas três razões.
 
+## Este código nunca foi compilado
+
+Foi escrito num container Linux sem Xcode nem toolchain Swift. As três
+verificações acima passam, mas não substituem um compilador. Se estás a ler isto
+numa sessão com Xcode à mão, o primeiro trabalho útil é `swift test` — ver
+`docs/10-continuar-no-mac-com-claude.md`.
+
 ## Arquitectura, em três regras
 
 1. **`BussolaDomain` não importa frameworks.** Sem SwiftData, SwiftUI, EventKit

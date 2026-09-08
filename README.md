@@ -57,6 +57,7 @@ project.yml             fonte de verdade do projecto Xcode (XcodeGen)
 | [07 — Fontes](docs/07-fontes.md) | Pesquisa consultada |
 | [08 — Construir](docs/08-construir.md) | Do repositório ao iPhone |
 | [09 — Primeiro arranque no Mac](docs/09-primeiro-arranque-no-mac.md) | Passo a passo, comandos copiáveis |
+| [10 — Continuar no Mac com o Claude](docs/10-continuar-no-mac-com-claude.md) | Prompt de arranque para compilar e correr |
 
 ## Aviso antes de escrever a primeira linha de Swift
 
