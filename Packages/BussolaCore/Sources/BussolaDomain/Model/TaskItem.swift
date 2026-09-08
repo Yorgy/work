@@ -96,6 +96,11 @@ public struct TaskItem: Identifiable, Sendable, Hashable, Codable {
     public var unblocksOthers: Bool
 
     public var createdAt: Date
+
+    /// Última alteração local. É o que decide quem ganha quando a mesma tarefa
+    /// muda dos dois lados da ponte com os Lembretes.
+    public var updatedAt: Date
+
     public var completedAt: Date?
 
     public init(
@@ -114,6 +119,7 @@ public struct TaskItem: Identifiable, Sendable, Hashable, Codable {
         recurrenceID: UUID? = nil,
         unblocksOthers: Bool = false,
         createdAt: Date = Date(),
+        updatedAt: Date? = nil,
         completedAt: Date? = nil
     ) {
         self.id = id
@@ -131,6 +137,7 @@ public struct TaskItem: Identifiable, Sendable, Hashable, Codable {
         self.recurrenceID = recurrenceID
         self.unblocksOthers = unblocksOthers
         self.createdAt = createdAt
+        self.updatedAt = updatedAt ?? createdAt
         self.completedAt = completedAt
     }
 
@@ -146,6 +153,12 @@ public struct TaskItem: Identifiable, Sendable, Hashable, Codable {
 
     /// Candidata a Rocha: exige concentração e tem duração de bloco.
     public var podeSerRocha: Bool { energy == .deep && estimatedMinutes >= 45 }
+
+    /// Marca a tarefa como alterada agora. Chamar em toda a escrita local — é
+    /// disto que depende a resolução de conflitos com os Lembretes.
+    public mutating func tocar(em agora: Date = Date()) {
+        updatedAt = agora
+    }
 
     public func diasDesdeCriacao(ate agora: Date, calendario: Calendar = .current) -> Int {
         calendario.dateComponents([.day], from: createdAt, to: agora).day ?? 0

@@ -4,6 +4,7 @@ import WidgetKit
 import BussolaDomain
 import BussolaPersistence
 import BussolaTriage
+import BussolaBridge
 
 /// O estado da app, num só sítio.
 ///
@@ -22,6 +23,8 @@ public final class AppModel {
     public let diagnostico: SyncDiagnostics
 
     private let calendario: Calendar
+    let leitorDeCalendario = CalendarReader()
+    var ponteDeLembretes = RemindersBridge()
 
     // MARK: - Estado
 
@@ -35,6 +38,13 @@ public final class AppModel {
 
     public private(set) var aCarregar = false
     public private(set) var ultimoErro: String?
+
+    /// Estado das pontes, para as Definições poderem explicar o que falta em vez
+    /// de a app degradar em silêncio.
+    public private(set) var acessoAoCalendario: CalendarReader.Acesso = .indisponivel
+    public private(set) var acessoAosLembretes = false
+    public private(set) var ultimaSincronizacaoFamilia: Date?
+    public private(set) var avisoDaPonte: String?
 
     // MARK: - Arranque
 
@@ -92,6 +102,7 @@ public final class AppModel {
             ultimoErro = error.localizedDescription
         }
         await diagnostico.verificar()
+        await sincronizarFamilia(agora: agora)
     }
 
     /// Passa o que está no App Group para a base de dados.
@@ -199,9 +210,11 @@ public final class AppModel {
         }
     }
 
-    public func guardar(_ tarefa: TaskItem) {
+    public func guardar(_ tarefa: TaskItem, agora: Date = Date()) {
         do {
-            try store.guardar(tarefa)
+            var actualizada = tarefa
+            actualizada.tocar(em: agora)
+            try store.guardar(actualizada)
             tarefas = try store.tarefas()
         } catch {
             ultimoErro = error.localizedDescription
@@ -231,6 +244,104 @@ public final class AppModel {
         } catch {
             ultimoErro = error.localizedDescription
         }
+    }
+
+    // MARK: - Ponte com os Lembretes
+
+    /// Espelha a área Família na lista partilhada.
+    ///
+    /// Corre a cada abertura da app e no ritual. Toda a decisão sobre conflitos
+    /// vem do `ReminderReconciler`, que é código puro e testado; aqui só se
+    /// executa o que ele decidiu.
+    public func sincronizarFamilia(agora: Date = Date()) async {
+        guard acessoAosLembretes else { return }
+        avisoDaPonte = nil
+        do {
+            let lembretes = try await ponteDeLembretes.ler()
+            let reconciler = ReminderReconciler(area: .familia)
+            let accoes = reconciler.reconciliar(
+                tarefas: tarefas, lembretes: lembretes, agora: agora
+            )
+            guard !accoes.isEmpty else {
+                ultimaSincronizacaoFamilia = agora
+                return
+            }
+
+            // Primeiro o lado de lá, para os identificadores novos voltarem.
+            let novosEspelhos = try await ponteDeLembretes.aplicar(accoes)
+
+            // Depois o lado de cá.
+            for accao in accoes {
+                switch accao {
+                case .criarTarefa(let espelho):
+                    try store.guardar(reconciler.tarefa(de: espelho, agora: agora))
+
+                case .actualizarTarefa(let tarefa):
+                    try store.guardar(tarefa)
+
+                case .concluirTarefa(let id):
+                    try store.concluir(id, em: agora)
+
+                case .desligarEspelho(let id):
+                    // Nunca apaga a tarefa — só lhe tira a ligação.
+                    if var tarefa = tarefas.first(where: { $0.id == id }) {
+                        tarefa.externalID = nil
+                        tarefa.tocar(em: agora)
+                        try store.guardar(tarefa)
+                    }
+
+                case .criarLembrete, .actualizarLembrete, .concluirLembrete:
+                    continue
+                }
+            }
+
+            // Guardar os identificadores atribuídos. Sem isto, a passagem
+            // seguinte criava os mesmos lembretes outra vez.
+            for (taskID, externalID) in novosEspelhos {
+                guard var tarefa = tarefas.first(where: { $0.id == taskID }) else { continue }
+                tarefa.externalID = externalID
+                try store.guardar(tarefa)
+            }
+
+            tarefas = try store.tarefas()
+            areas = try store.areas()
+            inbox = try store.inbox()
+            recalcularLeituras(agora: agora)
+            publicarInstantaneo()
+            ultimaSincronizacaoFamilia = agora
+        } catch {
+            // A ponte falhar não pode partir a app: a Família continua a
+            // funcionar como área local até o acesso voltar.
+            avisoDaPonte = error.localizedDescription
+        }
+    }
+
+    // MARK: - Capacidade real
+
+    /// A capacidade de um dia, a partir do calendário quando há acesso.
+    ///
+    /// Sem acesso, cai para um dia típico — e as Definições dizem que está a
+    /// usar uma estimativa, em vez de a app fingir que sabe.
+    public func capacidade(para dia: Date) async -> Capacity {
+        guard acessoAoCalendario.podeLer else {
+            return CapacityCalculator().calcular(blocosOcupados: [])
+        }
+        return await leitorDeCalendario.capacidade(de: dia, calendario: calendario)
+    }
+
+    // MARK: - Permissões
+
+    public func verificarAcessos() async {
+        acessoAoCalendario = await leitorDeCalendario.pedirAcesso()
+        acessoAosLembretes = await ponteDeLembretes.pedirAcesso()
+    }
+
+    public func escolherLista(_ nome: String) {
+        ponteDeLembretes = RemindersBridge(nomeDaLista: nome)
+    }
+
+    public var listasDeLembretes: [String] {
+        ponteDeLembretes.listasDisponiveis()
     }
 
     // MARK: - Derivados

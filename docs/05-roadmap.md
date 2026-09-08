@@ -53,13 +53,13 @@ Nesta fase a triagem é **manual e deliberadamente**. Serve para descobrires ond
 
 ---
 
-## Fase 3 — Pontes com o mundo (~3 semanas · 20h)
+## Fase 3 — Pontes com o mundo ✅ (~3 semanas · 20h)
 
 | Semana | Entrega |
 |---|---|
-| 8 | EventKit leitura de calendário → capacidade real do dia |
-| 9 | **Ponte com os Lembretes: área Família partilhada com a esposa** |
-| 10 | `WaitingFor` com follow-ups automáticos, `RecurrenceTemplate` com o calendário fiscal PT |
+| 8 | ✅ EventKit leitura de calendário → capacidade real do dia |
+| 9 | ✅ **Ponte com os Lembretes: área Família partilhada com a esposa** |
+| 10 | ✅ `WaitingFor` com follow-ups automáticos, `RecurrenceTemplate` com o calendário fiscal PT |
 
 A semana 9 é onde a Família deixa de ser uma lista tua e passa a ser trabalho partilhado a sério. A semana 10 é onde os prazos fiscais deixam de depender da tua memória.
 

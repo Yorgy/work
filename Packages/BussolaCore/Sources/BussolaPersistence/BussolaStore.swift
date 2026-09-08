@@ -145,6 +145,7 @@ public final class BussolaStore {
         guard let registo = try context.fetch(descritor).first else { return }
         registo.rawStatus = TaskStatus.done.rawValue
         registo.completedAt = agora
+        registo.updatedAt = agora
 
         let area = registo.rawArea
         let areas = FetchDescriptor<AreaRecord>(predicate: #Predicate { $0.rawID == area })

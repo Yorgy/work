@@ -28,6 +28,9 @@ struct BussolaApp: App {
     private func arrancar() async {
         do {
             let modelo = try AppModel.arrancar()
+            // Os acessos verificam-se antes do primeiro recarregar, para a
+            // primeira passagem já poder usar o calendário e os Lembretes.
+            await modelo.verificarAcessos()
             await modelo.recarregar()
             if await Notificacoes.pedirAutorizacao() {
                 await Notificacoes.agendar()

@@ -248,3 +248,24 @@ public enum TriagerFactory {
         return local.isAvailable ? local : RuleBasedTriager(calendario: calendario)
     }
 }
+
+/// Estado do triador para a interface, sem expor a framework.
+public struct TriagerEstado: Sendable {
+    public let disponivel: Bool
+    public let razao: String?
+
+    public init(disponivel: Bool, razao: String?) {
+        self.disponivel = disponivel
+        self.razao = razao
+    }
+}
+
+public enum TriagerEstadoFactory {
+    public static func actual() -> TriagerEstado {
+        let local = FoundationModelsTriager()
+        return TriagerEstado(
+            disponivel: local.isAvailable,
+            razao: local.razaoDeIndisponibilidade
+        )
+    }
+}

@@ -1,5 +1,6 @@
 import SwiftUI
 import BussolaDomain
+import BussolaTriage
 
 /// Revisão semanal, vinte minutos ao domingo.
 ///
@@ -9,6 +10,7 @@ import BussolaDomain
 struct RevisaoView: View {
     let modelo: AppModel
     @State private var nota = ""
+    @State private var aMostrarDefinicoes = false
 
     var body: some View {
         NavigationStack {
@@ -22,6 +24,18 @@ struct RevisaoView: View {
             }
             .navigationTitle("Revisão")
             .refreshable { await modelo.recarregar() }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        aMostrarDefinicoes = true
+                    } label: {
+                        Label("Definições", systemImage: "gearshape")
+                    }
+                }
+            }
+            .sheet(isPresented: $aMostrarDefinicoes) {
+                DefinicoesView(modelo: modelo)
+            }
         }
     }
 

@@ -45,6 +45,8 @@ Depois da primeira instalação: **Definições → Botão de Ação → Atalho 
 3. **Revisão → Estado** → deve dizer "Ligado ao iCloud". Se disser outra coisa, a mensagem explica porquê.
 4. **Ritual** → percorrer os quatro passos até "Fechado."
 5. **Widget "Hoje"** no ecrã principal → tem de mostrar a Rocha que acabaste de escolher.
+6. **Revisão → ⚙️ Definições** → dar acesso ao calendário e aos Lembretes.
+7. **Criar uma lista "Família" nos Lembretes e partilhá-la com a tua esposa.** Escolhê-la nas Definições. Uma tarefa de Família criada na Bússola tem de aparecer no iPhone dela em segundos, e o que ela acrescentar tem de chegar à tua Inbox — não directamente ao teu dia.
 
 ## Sem toolchain Swift à mão
 
@@ -64,6 +66,7 @@ Packages/BussolaCore/
   Sources/BussolaDomain/       Swift puro. Testável em qualquer plataforma.
   Sources/BussolaPersistence/  SwiftData + CloudKit + spool do App Group
   Sources/BussolaTriage/       Foundation Models
+  Sources/BussolaBridge/       EventKit: calendário e Lembretes
   Tests/                       99 testes
 App/                           SwiftUI: 5 ecrãs
 Shared/                        App Intents e o instantâneo dos widgets
@@ -80,4 +83,6 @@ project.yml                    A fonte de verdade do projecto Xcode
 | "Ligado ao iCloud" nunca aparece | Sessão iCloud não iniciada, ou o contentor não existe no portal |
 | Dados não passam para outro dispositivo | Alguma propriedade nova sem valor por omissão. Ver as regras de esquema em `Records.swift` |
 | Triagem sempre com confiança baixa | Apple Intelligence desligado. Ver Definições — a app diz a razão exacta |
+| A capacidade parece sempre a mesma | Sem acesso ao calendário. As Definições dizem que está a usar uma estimativa |
+| Lembretes duplicados a cada sincronização | O `externalID` não está a ser guardado. Ver o commit do `calendarItemIdentifier` |
 | A app deixou de abrir ao fim de uma semana | Perfil gratuito caducado. É para isto que serve a conta paga |

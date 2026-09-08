@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "BussolaDomain", targets: ["BussolaDomain"]),
         .library(name: "BussolaPersistence", targets: ["BussolaPersistence"]),
         .library(name: "BussolaTriage", targets: ["BussolaTriage"]),
+        .library(name: "BussolaBridge", targets: ["BussolaBridge"]),
     ],
     targets: [
         // Swift puro. Sem SwiftData, SwiftUI ou EventKit — ver ADR-009.
@@ -16,6 +17,7 @@ let package = Package(
 
         .target(name: "BussolaPersistence", dependencies: ["BussolaDomain"]),
         .target(name: "BussolaTriage", dependencies: ["BussolaDomain"]),
+        .target(name: "BussolaBridge", dependencies: ["BussolaDomain"]),
 
         .testTarget(name: "BussolaDomainTests", dependencies: ["BussolaDomain"]),
         .testTarget(name: "BussolaPersistenceTests", dependencies: ["BussolaPersistence"]),

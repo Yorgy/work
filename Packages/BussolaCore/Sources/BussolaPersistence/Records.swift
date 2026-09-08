@@ -60,6 +60,7 @@ public final class TaskRecord {
     public var recurrenceUUID: UUID?
     public var unblocksOthers: Bool = false
     public var createdAt: Date = Date()
+    public var updatedAt: Date = Date()
     public var completedAt: Date?
 
     public init(_ tarefa: TaskItem) {
@@ -83,6 +84,7 @@ public final class TaskRecord {
             recurrenceID: recurrenceUUID,
             unblocksOthers: unblocksOthers,
             createdAt: createdAt,
+            updatedAt: updatedAt,
             completedAt: completedAt
         )
     }
@@ -109,6 +111,7 @@ public final class TaskRecord {
         recurrenceUUID = t.recurrenceID
         unblocksOthers = t.unblocksOthers
         createdAt = t.createdAt
+        updatedAt = t.updatedAt
         completedAt = t.completedAt
     }
 }

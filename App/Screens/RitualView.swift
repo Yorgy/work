@@ -94,7 +94,7 @@ struct RitualView: View {
                 avancar: avancar
             )
         } else {
-            ProgressView().task { prepararProposta() }
+            ProgressView().task { await prepararProposta() }
         }
     }
 
@@ -116,13 +116,13 @@ struct RitualView: View {
         withAnimation { passo = seguinte }
     }
 
-    private func prepararProposta() {
+    private func prepararProposta() async {
         let calendario = Calendar.current
         guard let amanha = calendario.date(byAdding: .day, value: 1, to: Date()) else { return }
 
-        // Sem EventKit na v1, a capacidade parte de um dia típico. A Fase 3 liga
-        // isto ao calendário real — até lá, a estimativa é honesta sobre o que é.
-        let capacidade = CapacityCalculator().calcular(blocosOcupados: [])
+        // A capacidade vem do calendário real quando há acesso. Se amanhã tens
+        // quatro horas de reuniões, não se propõe uma Rocha de 90 minutos.
+        let capacidade = await modelo.capacidade(para: amanha)
 
         proposta = PlanProposer(calendario: calendario).propor(
             tarefas: modelo.tarefas,

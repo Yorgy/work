@@ -42,6 +42,8 @@ targets:
         product: BussolaPersistence
       - package: BussolaCore
         product: BussolaTriage
+      - package: BussolaCore
+        product: BussolaBridge
       - target: BussolaWidgets
     settings:
       base:
@@ -61,15 +63,20 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
-        # As duas permissões que a v1 pede mesmo. O calendário e os Lembretes
-        # entram na Fase 3 — pedir permissões que ainda não se usam gasta a
-        # paciência do utilizador no pior momento possível, o primeiro arranque.
+        # Cada permissão diz o que a app faz com ela e o que ganhas em troca.
+        # Um texto genérico é a razão mais comum para as pessoas recusarem.
         NSMicrophoneUsageDescription: >-
           Para poderes ditar uma captura em vez de a escrever, que é o que
           permite assentar uma ideia em menos de dois segundos.
         NSSpeechRecognitionUsageDescription: >-
           Para transcrever o que ditas. O reconhecimento é feito no próprio
           iPhone: nada do que dizes sai do dispositivo.
+        NSCalendarsFullAccessUsageDescription: >-
+          Para calcular quanto tempo tens mesmo livre amanhã. A Bússola só lê o
+          calendário — nunca lá escreve nada.
+        NSRemindersFullAccessUsageDescription: >-
+          Para espelhar a área Família numa lista partilhada dos Lembretes, e
+          assim poderes partilhá-la com quem não tem esta app instalada.
         CFBundleURLTypes:
           - CFBundleURLName: pt.bussola.app
             CFBundleURLSchemes: [bussola]
