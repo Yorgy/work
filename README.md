@@ -32,6 +32,18 @@ As apps de mercado resolvem bem a #1 e falham a #2 e a #3. O resultado é sempre
 4. **"À espera de" é um estado de primeira classe**, com dono e follow-up automático. Metade do trabalho é esperar por clientes, contabilista e empreiteiros — e é aí que se perde dinheiro e credibilidade.
 5. **A partilha com a esposa não se constrói.** Delega-se aos Lembretes da Apple. Ela não vai instalar uma app sideloaded.
 
+## Estado
+
+**MVP construído.** O domínio, a persistência, a triagem, os cinco ecrãs, os widgets e os App Intents estão escritos. Falta compilar num Mac — ver [08 — Como pôr isto a correr](docs/08-construir.md).
+
+```
+Packages/BussolaCore/   domínio, persistência e triagem · 83 testes
+App/                    SwiftUI, cinco ecrãs
+Shared/                 App Intents e instantâneo dos widgets
+Widgets/                WidgetKit
+project.yml             fonte de verdade do projecto Xcode (XcodeGen)
+```
+
 ## Documentação
 
 | Documento | Conteúdo |
@@ -43,6 +55,7 @@ As apps de mercado resolvem bem a #1 e falham a #2 e a #3. O resultado é sempre
 | [05 — Roadmap](docs/05-roadmap.md) | Fases, esforço, critérios de sucesso |
 | [06 — Decisões (ADR)](docs/06-decisoes-adr.md) | Decisões técnicas e o que se rejeitou |
 | [07 — Fontes](docs/07-fontes.md) | Pesquisa consultada |
+| [08 — Construir](docs/08-construir.md) | Do repositório ao iPhone |
 
 ## Aviso antes de escrever a primeira linha de Swift
 

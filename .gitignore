@@ -1,0 +1,19 @@
+# Gerado por XcodeGen a partir de project.yml — nunca committar.
+# Um .pbxproj fundido à mão é a origem clássica de conflitos irresolúveis.
+*.xcodeproj/
+*.xcworkspace/
+
+# Xcode
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+.swiftpm/
+*.moved-aside
+
+# SPM
+.build/
+Package.resolved
+
+# macOS
+.DS_Store

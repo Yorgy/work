@@ -7,7 +7,7 @@ import BussolaDomain
 /// sistema: o que arrefeceu, quem não respondeu, o que está parado sem ninguém
 /// ter reparado.
 struct RevisaoView: View {
-    @State var modelo: AppModel
+    let modelo: AppModel
     @State private var nota = ""
 
     var body: some View {

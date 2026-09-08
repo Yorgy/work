@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import BussolaDomain
 
 /// O ecrã mais importante da app, e o mais pobre em funcionalidades.
@@ -10,7 +11,7 @@ import BussolaDomain
 /// classificadas corrigem-se em três segundos na triagem, a não capturada está
 /// perdida para sempre.
 struct CapturarView: View {
-    @State var modelo: AppModel
+    let modelo: AppModel
     @Environment(\.dismiss) private var fechar
 
     @State private var texto = ""
@@ -27,7 +28,7 @@ struct CapturarView: View {
                 .onSubmit(guardar)
 
             HStack(spacing: Tema.espaco) {
-                BotaoDeMicrofone(ditado: $ditado, texto: $texto)
+                BotaoDeMicrofone(ditado: ditado)
 
                 Spacer()
 
@@ -37,8 +38,8 @@ struct CapturarView: View {
                     .disabled(texto.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
 
-            if let erro = ditado.erro {
-                Text(erro)
+            if let aviso = ditado.aviso {
+                Text(aviso)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -47,10 +48,17 @@ struct CapturarView: View {
         .padding(Tema.espaco * 1.25)
         .presentationDragIndicator(.visible)
         .onAppear { focado = true }
+        .onChange(of: ditado.transcricao) { _, novo in
+            guard !novo.isEmpty else { return }
+            texto = novo
+        }
         .interactiveDismissDisabled(ditado.aGravar)
     }
 
     private func guardar() {
+        // Fecha o ficheiro de áudio antes de o caminho seguir para a captura.
+        if ditado.aGravar { ditado.parar() }
+
         let conteudo = texto.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !conteudo.isEmpty else { return }
         modelo.capturar(conteudo, audioPath: ditado.caminhoDoAudio, origem: .app)
@@ -64,18 +72,11 @@ struct CapturarView: View {
 }
 
 struct BotaoDeMicrofone: View {
-    @Binding var ditado: Ditado
-    @Binding var texto: String
+    let ditado: Ditado
 
     var body: some View {
         Button {
-            if ditado.aGravar {
-                ditado.parar()
-            } else {
-                ditado.comecar { transcrito in
-                    texto = transcrito
-                }
-            }
+            if ditado.aGravar { ditado.parar() } else { ditado.comecar() }
         } label: {
             Image(systemName: ditado.aGravar ? "stop.circle.fill" : "mic.circle.fill")
                 .font(.system(size: 44))

@@ -9,7 +9,7 @@ import BussolaDomain
 /// Responde à pergunta que hoje não tem resposta — *o que é que eu estou a
 /// deixar cair?* — que é muito melhor do que *o que é que eu tenho para fazer?*
 struct AreasView: View {
-    @State var modelo: AppModel
+    let modelo: AppModel
     @State private var areaAberta: AreaID?
 
     var body: some View {
@@ -83,7 +83,7 @@ struct LinhaDeArea: View {
 }
 
 struct DetalheDeArea: View {
-    @State var modelo: AppModel
+    let modelo: AppModel
     let area: AreaID
 
     private var tarefas: [TaskItem] {

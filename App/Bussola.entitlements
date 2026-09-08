@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- O App Group é o que permite ao intent do Botão de Acção escrever uma
+         captura sem a app estar aberta. Sem isto, o caminho crítico não existe. -->
+    <key>com.apple.security.application-groups</key>
+    <array>
+        <string>group.pt.bussola.app</string>
+    </array>
+
+    <key>com.apple.developer.icloud-container-identifiers</key>
+    <array>
+        <string>iCloud.pt.bussola.app</string>
+    </array>
+    <key>com.apple.developer.icloud-services</key>
+    <array>
+        <string>CloudKit</string>
+    </array>
+</dict>
+</plist>

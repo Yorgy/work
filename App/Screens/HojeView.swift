@@ -8,7 +8,7 @@ import BussolaDomain
 /// como tudo o resto — a defesa contra a interrupção é arquitectural, não de
 /// força de vontade.
 struct HojeView: View {
-    @State var modelo: AppModel
+    let modelo: AppModel
     @Binding var aMostrarRitual: Bool
 
     var body: some View {

@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import WidgetKit
 import BussolaDomain
 import BussolaPersistence
 import BussolaTriage
@@ -84,6 +85,7 @@ public final class AppModel {
             projectos = try store.projectos()
             planoDeHoje = try store.plano(para: agora, calendario: calendario)
             recalcularLeituras(agora: agora)
+            publicarInstantaneo()
 
             ultimoErro = nil
         } catch {
@@ -191,6 +193,7 @@ public final class AppModel {
             tarefas = try store.tarefas()
             areas = try store.areas()
             recalcularLeituras(agora: agora)
+            publicarInstantaneo()
         } catch {
             ultimoErro = error.localizedDescription
         }
@@ -209,6 +212,11 @@ public final class AppModel {
         do {
             try store.guardar(plano)
             planoDeHoje = try store.plano(para: Date(), calendario: calendario)
+            publicarInstantaneo()
+            // A notificação da manhã passa a dizer o nome da Rocha: uma
+            // notificação genérica ignora-se ao fim de uma semana.
+            let rocha = plano.rockID.flatMap { id in tarefas.first { $0.id == id }?.title }
+            Task { await Notificacoes.actualizarAlinhamento(rocha: rocha) }
         } catch {
             ultimoErro = error.localizedDescription
         }
@@ -226,6 +234,19 @@ public final class AppModel {
     }
 
     // MARK: - Derivados
+
+    /// Escreve o que os widgets mostram e manda-os refrescar.
+    ///
+    /// Chamado sempre que muda alguma coisa visível de fora: ao recarregar, ao
+    /// fechar o plano e ao concluir uma tarefa. Um widget desactualizado no ecrã
+    /// principal mina a confiança no sistema mais depressa do que um erro.
+    func publicarInstantaneo() {
+        let instantaneo = InstantaneoDoDia.construir(
+            plano: planoDeHoje, tarefas: tarefas, leituras: leituras
+        )
+        try? instantaneo.escrever()
+        WidgetCenter.shared.reloadAllTimelines()
+    }
 
     func recalcularLeituras(agora: Date = Date()) {
         leituras = AreaThermometer().ler(

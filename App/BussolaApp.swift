@@ -29,6 +29,9 @@ struct BussolaApp: App {
         do {
             let modelo = try AppModel.arrancar()
             await modelo.recarregar()
+            if await Notificacoes.pedirAutorizacao() {
+                await Notificacoes.agendar()
+            }
             estado = .pronto(modelo)
         } catch {
             estado = .falhou(error.localizedDescription)
@@ -43,7 +46,7 @@ struct BussolaApp: App {
 }
 
 struct RaizView: View {
-    @State var modelo: AppModel
+    let modelo: AppModel
     @Environment(\.scenePhase) private var fase
 
     @State private var separador: Separador = .hoje

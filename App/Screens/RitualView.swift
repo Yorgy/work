@@ -6,7 +6,7 @@ import BussolaDomain
 /// Este é o produto. Tudo o resto na app existe para alimentar ou consumir o
 /// que aqui se decide.
 struct RitualView: View {
-    @State var modelo: AppModel
+    let modelo: AppModel
     @Environment(\.dismiss) private var fechar
 
     @State private var passo: Passo = .esvaziar
@@ -70,7 +70,10 @@ struct RitualView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .alert("Não deu", isPresented: .constant(erro != nil)) {
+            .alert("Não deu", isPresented: Binding(
+                get: { erro != nil },
+                set: { if !$0 { erro = nil } }
+            )) {
                 Button("Está bem") { erro = nil }
             } message: {
                 Text(erro ?? "")
@@ -133,7 +136,7 @@ struct RitualView: View {
         )
         if let rocha = proposta?.rocha { try? novo.definirRocha(rocha.task) }
         for pedra in proposta?.pedras ?? [] { try? novo.acrescentarPedra(pedra.task) }
-        for areia in proposta?.areia.prefix(8) ?? [] { novo.acrescentarAreia(areia) }
+        for areia in (proposta?.areia ?? []).prefix(8) { novo.acrescentarAreia(areia) }
         construtor = novo
     }
 
@@ -176,7 +179,7 @@ struct BarraDeProgresso: View {
 // MARK: - Passo 1 — Esvaziar
 
 struct PassoEsvaziar: View {
-    @State var modelo: AppModel
+    let modelo: AppModel
     let avancar: () -> Void
 
     @State private var sugestoes: [UUID: TriageSuggestion] = [:]

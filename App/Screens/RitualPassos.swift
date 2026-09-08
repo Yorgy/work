@@ -9,7 +9,7 @@ import BussolaDomain
 /// produz a lista fantasma em que se deixa de acreditar — e a partir daí o
 /// sistema já não serve para nada.
 struct PassoFecharODia: View {
-    @State var modelo: AppModel
+    let modelo: AppModel
     let avancar: () -> Void
 
     private var porFechar: [TaskItem] {
@@ -108,13 +108,13 @@ struct LinhaDeDecisao: View {
 // MARK: - Passo 3 — Escolher amanhã
 
 struct PassoEscolher: View {
-    @State var modelo: AppModel
+    let modelo: AppModel
     let proposta: PlanProposal
     @Binding var construtor: DayPlanBuilder
     let avancar: () -> Void
 
     @State private var erro: String?
-    @State private var aTrocar: TaskItem?
+    @State private var aEscolher = false
 
     var body: some View {
         List {
@@ -161,7 +161,7 @@ struct PassoEscolher: View {
                 }
                 if construtor.pebbles.count < DayPlan.limiteDePedras {
                     Button {
-                        aTrocar = construtor.pebbles.first
+                        aEscolher = true
                     } label: {
                         Label("Escolher outra", systemImage: "plus.circle")
                     }
@@ -178,18 +178,21 @@ struct PassoEscolher: View {
                     .disabled(construtor.estaVazio)
             }
         }
-        .sheet(item: $aTrocar) { _ in
+        .sheet(isPresented: $aEscolher) {
             SelectorDeTarefa(
                 candidatas: candidatasDisponiveis,
                 escolher: { escolhida in
                     do { try construtor.acrescentarPedra(escolhida) }
                     catch let falha as PlanError { erro = falha.mensagem }
                     catch { erro = error.localizedDescription }
-                    aTrocar = nil
+                    aEscolher = false
                 }
             )
         }
-        .alert("Não deu", isPresented: .constant(erro != nil)) {
+        .alert("Não deu", isPresented: Binding(
+            get: { erro != nil },
+            set: { if !$0 { erro = nil } }
+        )) {
             Button("Está bem") { erro = nil }
         } message: {
             Text(erro ?? "")
@@ -484,10 +487,16 @@ struct PassoFeito: View {
 
 struct EditorDeSugestao: View {
     let captura: Capture
-    @State var sugestao: TriageSuggestion
+    @State private var sugestao: TriageSuggestion
     let guardar: (TriageSuggestion) -> Void
 
     @Environment(\.dismiss) private var fechar
+
+    init(captura: Capture, sugestao: TriageSuggestion, guardar: @escaping (TriageSuggestion) -> Void) {
+        self.captura = captura
+        self.guardar = guardar
+        _sugestao = State(initialValue: sugestao)
+    }
 
     var body: some View {
         NavigationStack {

@@ -1,0 +1,117 @@
+# Gerado com XcodeGen: `xcodegen generate`.
+#
+# O .xcodeproj não está no repositório de propósito. Um .pbxproj escrito ou
+# fundido à mão é ilegível e é a origem clássica de conflitos que ninguém
+# consegue resolver. Este ficheiro é a fonte de verdade.
+
+name: Bussola
+
+options:
+  bundleIdPrefix: pt.bussola
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    DEVELOPMENT_TEAM: ${DEVELOPMENT_TEAM}
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+
+packages:
+  BussolaCore:
+    path: Packages/BussolaCore
+
+targets:
+
+  # ---------------------------------------------------------------- app ----
+  Bussola:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+      - path: Shared
+    dependencies:
+      - package: BussolaCore
+        product: BussolaDomain
+      - package: BussolaCore
+        product: BussolaPersistence
+      - package: BussolaCore
+        product: BussolaTriage
+      - target: BussolaWidgets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: pt.bussola.app
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        # A app usa-se com uma mão, com o polegar, muitas vezes de pé numa obra.
+        # Landscape não serve nenhum dos ecrãs.
+        CODE_SIGN_ENTITLEMENTS: App/Bussola.entitlements
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: "1.0"
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Bússola
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        # As duas permissões que a v1 pede mesmo. O calendário e os Lembretes
+        # entram na Fase 3 — pedir permissões que ainda não se usam gasta a
+        # paciência do utilizador no pior momento possível, o primeiro arranque.
+        NSMicrophoneUsageDescription: >-
+          Para poderes ditar uma captura em vez de a escrever, que é o que
+          permite assentar uma ideia em menos de dois segundos.
+        NSSpeechRecognitionUsageDescription: >-
+          Para transcrever o que ditas. O reconhecimento é feito no próprio
+          iPhone: nada do que dizes sai do dispositivo.
+        CFBundleURLTypes:
+          - CFBundleURLName: pt.bussola.app
+            CFBundleURLSchemes: [bussola]
+        UIUserInterfaceStyle: Automatic
+
+  # ------------------------------------------------------------ widgets ----
+  BussolaWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Widgets
+      - path: Shared
+    dependencies:
+      - package: BussolaCore
+        product: BussolaDomain
+      - package: BussolaCore
+        product: BussolaPersistence
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: pt.bussola.app.widgets
+        CODE_SIGN_ENTITLEMENTS: Widgets/BussolaWidgets.entitlements
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: "1.0"
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: Bússola
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+
+schemes:
+  Bussola:
+    build:
+      targets:
+        Bussola: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - BussolaCore/BussolaDomainTests
+        - BussolaCore/BussolaPersistenceTests
