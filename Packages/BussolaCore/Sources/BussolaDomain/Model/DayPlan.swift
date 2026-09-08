@@ -186,6 +186,29 @@ public struct DayPlanBuilder: Sendable {
         pebbles = candidatas
     }
 
+    /// Actualiza uma tarefa já no plano, no sítio onde está.
+    ///
+    /// É o que o passo de ancorar precisa: só muda a âncora, não a identidade
+    /// nem a área. Fazê-lo com remover-e-voltar-a-acrescentar reexecutava toda a
+    /// validação — e bastava uma delas falhar para a tarefa desaparecer
+    /// silenciosamente do plano a meio do ritual.
+    @discardableResult
+    public mutating func actualizar(_ tarefa: TaskItem) -> Bool {
+        if rock?.id == tarefa.id {
+            rock = tarefa
+            return true
+        }
+        if let indice = pebbles.firstIndex(where: { $0.id == tarefa.id }) {
+            pebbles[indice] = tarefa
+            return true
+        }
+        if let indice = sand.firstIndex(where: { $0.id == tarefa.id }) {
+            sand[indice] = tarefa
+            return true
+        }
+        return false
+    }
+
     /// Reordena as Pedras. A ordem é informação: a 2 só se activa quando a 1 fecha.
     public mutating func reordenarPedras(_ ordem: [UUID]) {
         let porID = Dictionary(uniqueKeysWithValues: pebbles.map { ($0.id, $0) })

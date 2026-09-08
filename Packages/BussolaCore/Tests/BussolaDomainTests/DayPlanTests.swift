@@ -146,3 +146,59 @@ struct DayPlanTests {
         #expect(b.pebbles.isEmpty)
     }
 }
+
+@Suite("Actualizar no sítio — o que o passo de ancorar precisa")
+struct DayPlanActualizarTests {
+
+    @Test("Ancorar uma Pedra não a tira do plano nem lhe muda a ordem")
+    func actualizarPreservaPosicao() throws {
+        var b = DayPlanBuilder(date: Fixo.segunda, calendario: Fixo.calendario)
+        let a = TaskItem.fake("A", area: .agencia, ancorada: false)
+        let c = TaskItem.fake("C", area: .obras, ancorada: false)
+        try b.acrescentarPedra(a, em: Fixo.segunda)
+        try b.acrescentarPedra(c, em: Fixo.segunda)
+
+        var ancorada = a
+        ancorada.anchor = Anchor(quando: "depois do café", onde: "no escritório")
+        #expect(b.actualizar(ancorada))
+
+        #expect(b.pebbles.count == 2)
+        #expect(b.pebbles.first?.id == a.id)
+        #expect(b.pebbles.first?.anchor?.quando == "depois do café")
+    }
+
+    @Test("Actualizar a Rocha mantém-na como Rocha")
+    func actualizarRocha() throws {
+        var b = DayPlanBuilder(date: Fixo.segunda, calendario: Fixo.calendario)
+        let r = TaskItem.rocha("Profundo")
+        try b.definirRocha(r, em: Fixo.segunda)
+
+        var mudada = r
+        mudada.title = "Profundo, revisto"
+        #expect(b.actualizar(mudada))
+        #expect(b.rock?.title == "Profundo, revisto")
+    }
+
+    @Test("Actualizar algo que não está no plano devolve falso e não mexe em nada")
+    func actualizarInexistente() throws {
+        var b = DayPlanBuilder(date: Fixo.segunda, calendario: Fixo.calendario)
+        try b.acrescentarPedra(.fake("A"), em: Fixo.segunda)
+        #expect(b.actualizar(.fake("Estranha")) == false)
+        #expect(b.pebbles.count == 1)
+    }
+
+    @Test("Depois de ancorar todas, o plano fecha")
+    func fechaDepoisDeAncorar() throws {
+        var b = DayPlanBuilder(date: Fixo.segunda, calendario: Fixo.calendario)
+        let sem = TaskItem.fake("Sem âncora", ancorada: false)
+        try b.acrescentarPedra(sem, em: Fixo.segunda)
+        #expect(b.estaPronto == false)
+
+        var com = sem
+        com.anchor = Anchor(quando: "de manhã", onde: "em casa")
+        b.actualizar(com)
+
+        #expect(b.estaPronto)
+        #expect(throws: Never.self) { _ = try b.construir() }
+    }
+}

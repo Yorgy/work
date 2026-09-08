@@ -37,7 +37,7 @@ As apps de mercado resolvem bem a #1 e falham a #2 e a #3. O resultado é sempre
 **MVP construído.** O domínio, a persistência, a triagem, os cinco ecrãs, os widgets e os App Intents estão escritos. Falta compilar num Mac — ver [08 — Como pôr isto a correr](docs/08-construir.md).
 
 ```
-Packages/BussolaCore/   domínio, persistência e triagem · 83 testes
+Packages/BussolaCore/   domínio, persistência e triagem · 99 testes
 App/                    SwiftUI, cinco ecrãs
 Shared/                 App Intents e instantâneo dos widgets
 Widgets/                WidgetKit

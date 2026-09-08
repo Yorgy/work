@@ -372,7 +372,8 @@ struct PassoAncorar: View {
             if let rocha = construtor.rock {
                 Section("A Rocha") {
                     EditorDeAncora(tarefa: rocha, quandos: Self.quandos, ondes: Self.ondes) {
-                        actualizada in aplicarRocha(actualizada)
+                        actualizada in
+                        _ = construtor.actualizar(actualizada)
                     }
                 }
             }
@@ -381,7 +382,8 @@ struct PassoAncorar: View {
                 Section("As Pedras") {
                     ForEach(construtor.pebbles) { pedra in
                         EditorDeAncora(tarefa: pedra, quandos: Self.quandos, ondes: Self.ondes) {
-                            actualizada in aplicarPedra(actualizada)
+                            actualizada in
+                        _ = construtor.actualizar(actualizada)
                         }
                     }
                 }
@@ -399,16 +401,6 @@ struct PassoAncorar: View {
         }
     }
 
-    private func aplicarRocha(_ tarefa: TaskItem) {
-        try? construtor.definirRocha(tarefa)
-    }
-
-    private func aplicarPedra(_ tarefa: TaskItem) {
-        let ordem = construtor.pebbles.map(\.id)
-        construtor.removerPedra(tarefa.id)
-        try? construtor.acrescentarPedra(tarefa)
-        construtor.reordenarPedras(ordem)
-    }
 }
 
 struct EditorDeAncora: View {

@@ -64,7 +64,7 @@ Packages/BussolaCore/
   Sources/BussolaDomain/       Swift puro. Testável em qualquer plataforma.
   Sources/BussolaPersistence/  SwiftData + CloudKit + spool do App Group
   Sources/BussolaTriage/       Foundation Models
-  Tests/                       83 testes
+  Tests/                       99 testes
 App/                           SwiftUI: 5 ecrãs
 Shared/                        App Intents e o instantâneo dos widgets
                                (compilado nos dois alvos)
